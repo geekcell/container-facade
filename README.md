@@ -116,7 +116,7 @@ class SomeClass
 
 ### Testing
 
-Although the above looks like an anti pattern, it's actually very testing friendly. During unit testing, you can use the `swapMock()` method to literally swap the real service with a Mockery mock.
+Although the above looks like an anti pattern, it's actually very testing friendly. During unit testing, you can use the `swapMock()` method to literally swap the real service with a [Mockery](https://github.com/mockery/mockery) mock.
 
 ```php
 <?php
@@ -151,7 +151,7 @@ class SomeClassTest extends TestCase
 }
 ```
 
-**Hint:** You must call the `clear()` method to clear out the internally cached mock instance. For PHPUnit, you could use the `tearDown()` method to do so.
+**Hint:** You must call the `clear()` method to clear out the internally cached mock instance. For [PHPUnit](https://phpunit.de/), you could use the `tearDown()` method to do so.
 
 ## A Word of Caution
 
