@@ -2,7 +2,7 @@
 
 [![Unit tests workflow status](https://github.com/geekcell/container-facade/actions/workflows/tests.yaml/badge.svg)](https://github.com/geekcell/container-facade/actions/workflows/tests.yml)
 
-A standalone PHP library inspired by Laravel's Facade implementation, which can be used with any [PSR-11 compatible](https://www.php-fig.org/psr/psr-11/) dependency injection container (DIC) such as (the ones used by) [Symfony](https://symfony.com/), [Pimple](https://github.com/silexphp/Pimple), or [Slim](https://www.slimframework.com/). 
+A standalone PHP library heavily inspired by [Laravel's Facade](https://laravel.com/docs/master/facades) implementation, which can be used with any [PSR-11 compatible](https://www.php-fig.org/psr/psr-11/) dependency injection container (DIC) such as (the ones used by) [Symfony](https://symfony.com/), [Pimple](https://github.com/silexphp/Pimple), or [Slim](https://www.slimframework.com/). 
 
 ## Installation
 
