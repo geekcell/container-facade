@@ -1,0 +1,50 @@
+name: PHPUnit Tests
+
+on:
+    pull_request:
+    push:
+        branches:
+            - main
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+    cancel-in-progress: true
+
+jobs:
+    phpunit:
+        name: PHPUnit
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        steps:
+            # Checkout the code
+            - name: Checkout Code
+              uses: actions/checkout@v3.3.0
+
+            # Setup PHP
+            - name: Setup PHP
+              uses: shivammathur/setup-php@2.23.0
+              with:
+                php-version: '8.1'
+                coverage: xdebug
+
+            # Install dependencies
+            - name: Cache Composer dependencies
+              uses: actions/cache@v3.2.3
+              with:
+                path: vendor
+                key: ${{ runner.os }}-vendor-${{ hashFiles('**/composer.lock') }}
+            - name: Install dependencies
+              run: |
+                composer install --prefer-dist --no-scripts --ignore-platform-reqs
+
+            # Run tests
+            - name: Run Unit Tests
+              run: |
+                vendor/bin/phpunit --coverage-text --coverage-clover reports/coverage.xml
+
+            # SonarCloud
+            # - name: SonarCloud Scan
+            #   uses: SonarSource/sonarcloud-github-action@master
+            #   env:
+            #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
