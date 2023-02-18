@@ -153,6 +153,12 @@ class SomeClassTest extends TestCase
 
 **Hint:** You must call the `clear()` method to clear out the internally cached mock instance. For PHPUnit, you could use the `tearDown()` method to do so.
 
+## A Word of Caution
+
+> With great power comes great responsibility.
+
+While there are valid use cases, and even though service facades offer a high level of convenience, you should still use them only sparingly and **revert to standard dependency injection whenever possible**, because all facades interally rely on PHP's [`__callStatic`](https://www.php.net/manual/de/language.oop5.overloading.php#object.callstatic) magic method, which can make debugging more cumbersome/difficult.
+
 ## Examples
 
 See the `examples` directory for various sample projects with a minimal integration of this package.
