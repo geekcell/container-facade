@@ -165,4 +165,5 @@ See the `examples` directory for various sample projects with a minimal integrat
 
 | Framwork    | Sample project                       |
 | ----------- | ------------------------------------ |
+| Slim        | [examples/slim](examples/slim)       |
 | Symfony     | [examples/symfony](examples/symfony) |
