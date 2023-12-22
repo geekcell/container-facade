@@ -117,49 +117,30 @@ class FacadeTest extends TestCase
         ServiceFacade::invalid(); // @phpstan-ignore-line
     }
 
-    public function testGetMockableClass(): void
+    public function testGetFacadeRootUsesSwappedValueWithoutContainer(): void
     {
-        // Given
-        ServiceFacade::setContainer($this->container);
+        $service = new Service();
+        ServiceFacade::swap($service);
 
-        // When
-        $result = ServiceFacade::getMockableClass();
+        $root = ServiceFacade::getFacadeRoot();
 
-        // Then
-        $this->assertSame(Service::class, $result);
+        $this->assertSame($root, $service);
     }
 
-    public function testCreateMock(): void
+    public function testSwap(): void
     {
         // Given
         ServiceFacade::setContainer($this->container);
 
-        // When
-        $mock = ServiceFacade::createMock();
+        $root = ServiceFacade::getFacadeRoot();
+        $this->assertSame($this->service, $root);
 
-        // Then
-        $this->assertInstanceOf(Mockery\MockInterface::class, $mock);
-    }
+        $otherService = new Service();
+        ServiceFacade::swap($otherService);
 
-    public function testSwapMock(): void
-    {
-        // Given
-        ServiceFacade::setContainer($this->container);
-
-        // When
-        $mock = ServiceFacade::swapMock();
-        $mock->shouldReceive('greeting')->andReturn('Hello Mock!');
-
-        // Then
-        $this->assertInstanceOf(Mockery\MockInterface::class, $mock);
-
-        $result = ServiceFacade::greeting('World'); // @phpstan-ignore-line
-        $this->assertEquals('Hello Mock!', $result);
-
-        ServiceFacade::clear();
-        ServiceFacade::setContainer($this->container);
-        $result = ServiceFacade::greeting('World'); // @phpstan-ignore-line
-        $this->assertEquals('Hello World!', $result);
+        $otherRoot = ServiceFacade::getFacadeRoot();
+        $this->assertSame($otherRoot, $otherService);
+        $this->assertNotSame($root, $otherRoot);
     }
 
     public function testSettingContainerClearsFacadeCache(): void

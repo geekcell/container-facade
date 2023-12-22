@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace GeekCell\Facade;
 
-use Mockery;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -24,7 +23,7 @@ abstract class Facade
     /**
      * @var array<object>
      */
-    protected static array $resolvedInstances = [];
+    protected static array $swappedInstances = [];
 
     /**
      * Return the underlying instance behind the facade.
@@ -39,8 +38,8 @@ abstract class Facade
     public static function getFacadeRoot(): object
     {
         $accessor = static::getFacadeAccessor();
-        if (isset(static::$resolvedInstances[$accessor])) {
-            return static::$resolvedInstances[$accessor];
+        if (isset(static::$swappedInstances[$accessor])) {
+            return static::$swappedInstances[$accessor];
         }
 
         if (!isset(static::$container)) {
@@ -50,11 +49,9 @@ abstract class Facade
         $instance = static::$container->get($accessor);
         if (!is_object($instance)) {
             throw new \UnexpectedValueException(
-                sprintf('The entry for "%s" must return an object.', $accessor),
+                sprintf('The entry for "%s" must return an object. Got: %s', $accessor, get_debug_type($instance)),
             );
         }
-
-        self::$resolvedInstances[$accessor] = $instance;
 
         return $instance;
     }
@@ -88,57 +85,22 @@ abstract class Facade
      */
     public static function clear(): void
     {
-        static::$resolvedInstances = [];
+        static::$swappedInstances = [];
         static::$container = null;
     }
 
     /**
-     * Return the class name for the underlying instance behind the facade.
+     * @template T of object
      *
-     * @return string
+     * @param T $newInstance
+     * @return T
      */
-    public static function getMockableClass(): string
-    {
-        $instance = static::getFacadeRoot();
-        return get_class($instance);
-    }
-
-    /**
-     * Return a Mockery mock instance of the underlying instance behind the facade.
-     *
-     * @return Mockery\MockInterface
-     *
-     * @throws NotFoundExceptionInterface
-     * @throws ContainerExceptionInterface
-     * @throws \LogicException
-     * @throws \UnexpectedValueException
-     */
-    public static function createMock(): Mockery\MockInterface
-    {
-        $classToMock = static::getMockableClass();
-        return Mockery::mock($classToMock);
-    }
-
-    /**
-     * Return a Mockery mock instance, but also swap the underlying instance behind the facade
-     * so consecutive calls to the facade will use the mock.
-     *
-     * This behavior can be reset by calling Facade::clear().
-     *
-     * @return Mockery\MockInterface
-     *
-     * @throws NotFoundExceptionInterface
-     * @throws ContainerExceptionInterface
-     * @throws \LogicException
-     * @throws \UnexpectedValueException
-     */
-    public static function swapMock(): Mockery\MockInterface
+    public static function swap($newInstance)
     {
         $accessor = static::getFacadeAccessor();
-        $mock = static::createMock();
-        static::$resolvedInstances[$accessor] = $mock;
+        static::$swappedInstances[$accessor] = $newInstance;
 
-        return $mock;
+        return $newInstance;
     }
 
     /**
