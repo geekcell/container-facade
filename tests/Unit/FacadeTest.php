@@ -161,4 +161,21 @@ class FacadeTest extends TestCase
         $result = ServiceFacade::greeting('World'); // @phpstan-ignore-line
         $this->assertEquals('Hello World!', $result);
     }
+
+    public function testSettingContainerClearsFacadeCache(): void
+    {
+        $firstService = new Service();
+        $firstContainer = new Container($firstService);
+        ServiceFacade::setContainer($firstContainer);
+        $firstRoot = ServiceFacade::getFacadeRoot();
+        $this->assertSame($firstRoot, $firstService);
+
+        $secondService = new Service();
+        $secondContainer = new Container($secondService);
+        ServiceFacade::setContainer($secondContainer);
+        $secondRoot = ServiceFacade::getFacadeRoot();
+        $this->assertSame($secondRoot, $secondService);
+
+        $this->assertNotSame($firstRoot, $secondRoot);
+    }
 }

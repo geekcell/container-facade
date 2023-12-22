@@ -136,13 +136,13 @@ abstract class Facade
     {
         $accessor = static::getFacadeAccessor();
         $mock = static::createMock();
-        self::$resolvedInstances[$accessor] = $mock;
+        static::$resolvedInstances[$accessor] = $mock;
 
         return $mock;
     }
 
     /**
-     * Set the container instance.
+     * Set the container instance. Reset any cache instances in the process.
      *
      * @codeCoverageIgnore
      *
@@ -151,6 +151,8 @@ abstract class Facade
      */
     public static function setContainer(ContainerInterface $container): void
     {
+        static::clear();
+
         static::$container = $container;
     }
 
